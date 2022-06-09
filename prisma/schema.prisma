@@ -9,3 +9,71 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id         Int     @default(autoincrement()) @id
+  email      String  @unique
+  password   String
+  name       String?
+  role       Role    @default(USER)
+  books      AuthorsOnBooks[]
+  categories CategoriesOnBooks[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Publisher {
+  id    Int     @default(autoincrement()) @id
+  name  String
+  books Book[]
+}
+
+model Book {
+  id          Int       @default(autoincrement()) @id
+  title       String
+  content     String?
+  published   Boolean?  @default(false)
+  publisher   Publisher @relation(fields: [publisherId], references: [id])
+  publisherId Int
+  authors     AuthorsOnBooks[]
+  categories  CategoriesOnBooks[]
+}
+
+model Author {
+  id    Int     @default(autoincrement()) @id
+  name  String
+  books AuthorsOnBooks[]
+}
+
+model AuthorsOnBooks {
+  book       Book     @relation(fields: [bookId], references: [id])
+  bookId     Int
+  author     Author   @relation(fields: [authorId], references: [id])
+  authorId   Int
+  assignedAt DateTime @default(now())
+  assigner   User     @relation(fields: [assignedBy], references: [id])
+  assignedBy Int
+
+  @@id([bookId, authorId, assignedBy])
+}
+
+model Category {
+  id    Int                 @id @default(autoincrement())
+  name  String
+  books CategoriesOnBooks[]
+}
+
+model CategoriesOnBooks {
+  book       Book     @relation(fields: [bookId], references: [id])
+  bookId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  assignedAt DateTime @default(now())
+  assigner   User     @relation(fields: [assignedBy], references: [id])
+  assignedBy Int
+
+  @@id([bookId, categoryId, assignedBy])
+}
