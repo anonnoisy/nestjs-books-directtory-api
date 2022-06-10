@@ -7,9 +7,10 @@ import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AuthorsModule } from './authors/authors.module';
 import { PublishersModule } from './publishers/publishers.module';
+import { BooksModule } from './books/books.module';
 
 @Module({
-  imports: [UsersModule, AuthModule, CategoriesModule, AuthorsModule, PublishersModule],
+  imports: [UsersModule, AuthModule, CategoriesModule, AuthorsModule, PublishersModule, BooksModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
   exports: [PrismaService],
