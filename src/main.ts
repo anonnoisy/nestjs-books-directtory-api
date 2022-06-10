@@ -9,6 +9,7 @@ import { AppModule } from './app.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthorsModule } from './authors/authors.module';
 import { CategoriesModule } from './categories/categories.module';
+import { PublishersModule } from './publishers/publishers.module';
 import { UsersModule } from './users/users.module';
 
 async function bootstrap() {
@@ -55,7 +56,7 @@ async function bootstrap() {
     .build();
 
   const bookDocument = SwaggerModule.createDocument(app, thirdOptions, {
-    include: [AuthorsModule, CategoriesModule],
+    include: [AuthorsModule, CategoriesModule, PublishersModule],
   });
   SwaggerModule.setup('api/books', app, bookDocument);
 
