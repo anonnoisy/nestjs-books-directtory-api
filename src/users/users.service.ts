@@ -14,8 +14,10 @@ export class UsersService {
     });
   }
 
-  async findAll(): Promise<User[] | []> {
-    return this.prisma.user.findMany();
+  async findAll(email?: string): Promise<User[] | []> {
+    return this.prisma.user.findMany({
+      where: { email },
+    });
   }
 
   async findOne(id: number): Promise<User> {
