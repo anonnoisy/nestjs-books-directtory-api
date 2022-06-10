@@ -7,6 +7,7 @@ import {
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AuthModule } from './auth/auth.module';
+import { AuthorsModule } from './authors/authors.module';
 import { CategoriesModule } from './categories/categories.module';
 import { UsersModule } from './users/users.module';
 
@@ -54,7 +55,7 @@ async function bootstrap() {
     .build();
 
   const bookDocument = SwaggerModule.createDocument(app, thirdOptions, {
-    include: [CategoriesModule],
+    include: [AuthorsModule, CategoriesModule],
   });
   SwaggerModule.setup('api/books', app, bookDocument);
 
