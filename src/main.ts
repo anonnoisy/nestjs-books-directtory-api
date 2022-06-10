@@ -7,6 +7,7 @@ import {
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AuthModule } from './auth/auth.module';
+import { CategoriesModule } from './categories/categories.module';
 import { UsersModule } from './users/users.module';
 
 async function bootstrap() {
@@ -40,10 +41,22 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
-  const dogDocument = SwaggerModule.createDocument(app, secondOptions, {
+  const userDocument = SwaggerModule.createDocument(app, secondOptions, {
     include: [UsersModule],
   });
-  SwaggerModule.setup('api/users', app, dogDocument);
+  SwaggerModule.setup('api/users', app, userDocument);
+
+  const thirdOptions = new DocumentBuilder()
+    .setTitle('Books Directory API Endpoints')
+    .setDescription('The Books directory API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const bookDocument = SwaggerModule.createDocument(app, thirdOptions, {
+    include: [CategoriesModule],
+  });
+  SwaggerModule.setup('api/books', app, bookDocument);
 
   app.useGlobalPipes(new ValidationPipe());
 
