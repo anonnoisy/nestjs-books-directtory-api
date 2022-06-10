@@ -31,6 +31,7 @@ export class AuthController {
     return await this.authService.login(user);
   }
 
+  // For now the jwt token is NOT SECURE, because the token can be revoked
   @UseGuards(JwtAuthGuard)
   @Post('/logout')
   @ApiResponse({
@@ -38,8 +39,7 @@ export class AuthController {
     description: 'Logout successful.',
   })
   async logout(@Req() request) {
-    console.log(request.isAuthenticated());
-    return request.user;
+    return null;
   }
 
   @UseGuards(JwtAuthGuard)
