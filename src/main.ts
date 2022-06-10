@@ -23,8 +23,8 @@ async function bootstrap() {
   });
 
   const options = new DocumentBuilder()
-    .setTitle('Books Directory')
-    .setDescription('The Books Directory API description')
+    .setTitle('Authentication API Endpoints')
+    .setDescription('The authentication API description')
     .setVersion('1.0')
     .build();
 
