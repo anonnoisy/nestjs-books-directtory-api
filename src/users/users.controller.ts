@@ -20,10 +20,14 @@ import {
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { UserRoleGuard } from 'src/guards/user-role.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enums/role.enum';
 
 @ApiTags('Users')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, UserRoleGuard)
+@Roles(Role.ADMIN)
 @Controller({
   path: 'users',
   version: '1',

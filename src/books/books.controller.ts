@@ -10,19 +10,23 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enums/role.enum';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { UserRoleGuard } from 'src/guards/user-role.guard';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
 @ApiTags('Books')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, UserRoleGuard)
 @Controller({ path: 'books', version: '1' })
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   create(@Body() createBookDto: CreateBookDto, @Req() req) {
     return this.booksService.create(createBookDto, req.user.userId);
   }
@@ -38,6 +42,7 @@ export class BooksController {
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   update(
     @Param('id') id: string,
     @Body() updateBookDto: UpdateBookDto,
@@ -47,6 +52,7 @@ export class BooksController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.booksService.remove(+id);
   }
