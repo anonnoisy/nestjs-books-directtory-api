@@ -9,6 +9,14 @@ export class BooksService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createBookDto: CreateBookDto, userId: number): Promise<Book> {
+    const categoriesCreation = createBookDto.categoryIds.map((item) => {
+      return { assignedBy: userId, assignedAt: new Date(), categoryId: item };
+    });
+
+    const authorsCreation = createBookDto.authorIds.map((item) => {
+      return { assignedBy: userId, assignedAt: new Date(), authorId: item };
+    });
+
     return await this.prisma.book.create({
       data: {
         title: createBookDto.title,
@@ -16,22 +24,10 @@ export class BooksService {
         published: createBookDto.published,
         publisherId: createBookDto.publisherId,
         categories: {
-          create: [
-            {
-              assignedBy: userId,
-              assignedAt: new Date(),
-              categoryId: createBookDto.categoryId,
-            },
-          ],
+          create: categoriesCreation,
         },
         authors: {
-          create: [
-            {
-              assignedBy: userId,
-              assignedAt: new Date(),
-              authorId: createBookDto.authorId,
-            },
-          ],
+          create: authorsCreation,
         },
       },
       include: {
@@ -52,9 +48,6 @@ export class BooksService {
 
   async findAll(): Promise<Book[]> {
     return await this.prisma.book.findMany({
-      orderBy: {
-        id: 'asc',
-      },
       include: {
         publisher: true,
         authors: {
@@ -67,6 +60,9 @@ export class BooksService {
             category: true,
           },
         },
+      },
+      orderBy: {
+        id: 'asc',
       },
     });
   }
@@ -96,8 +92,29 @@ export class BooksService {
     return book;
   }
 
-  async update(id: number, updateBookDto: UpdateBookDto): Promise<Book> {
+  async update(
+    id: number,
+    userId: number,
+    updateBookDto: UpdateBookDto,
+  ): Promise<Book> {
     const book = await this.findOne(id);
+
+    const categoriesCreation = updateBookDto.categoryIds.map((item) => {
+      return {
+        categoryId: item,
+        assignedBy: userId,
+        assignedAt: new Date(),
+      };
+    });
+
+    const authorsCreation = updateBookDto.authorIds.map((item) => {
+      return {
+        authorId: item,
+        assignedBy: userId,
+        assignedAt: new Date(),
+      };
+    });
+
     return await this.prisma.book.update({
       where: { id: book.id },
       data: {
@@ -106,23 +123,15 @@ export class BooksService {
         published: updateBookDto.published,
         publisherId: updateBookDto.publisherId,
         categories: {
-          updateMany: {
-            where: {
-              bookId: book.id,
-            },
-            data: {
-              categoryId: updateBookDto.categoryId,
-            },
+          deleteMany: {},
+          createMany: {
+            data: categoriesCreation,
           },
         },
         authors: {
-          updateMany: {
-            where: {
-              bookId: book.id,
-            },
-            data: {
-              authorId: updateBookDto.authorId,
-            },
+          deleteMany: {},
+          createMany: {
+            data: authorsCreation,
           },
         },
       },

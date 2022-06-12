@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  ArrayMinSize,
+  ArrayNotEmpty,
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -36,22 +39,24 @@ export class CreateBookDto {
   published: boolean;
 
   @ApiProperty({
-    example: 1,
-    description: 'Category of the book',
+    example: [1, 2, 3],
+    description: 'Ids category of the book',
     required: true,
   })
-  @IsNumber()
-  @IsNotEmpty()
-  categoryId: number;
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMinSize(1)
+  categoryIds: number[];
 
   @ApiProperty({
-    example: 1,
-    description: 'Author of the book',
+    example: [1, 2, 3],
+    description: 'Ids author of the book',
     required: true,
   })
-  @IsNumber()
-  @IsNotEmpty()
-  authorId: number;
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMinSize(1)
+  authorIds: number[];
 
   @ApiProperty({
     example: 1,

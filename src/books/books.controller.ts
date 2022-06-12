@@ -51,7 +51,7 @@ export class BooksController {
     @Body() updateBookDto: UpdateBookDto,
     @Req() req,
   ) {
-    return this.booksService.update(+id, updateBookDto);
+    return this.booksService.update(+id, req.user.userId, updateBookDto);
   }
 
   @Delete(':id')
