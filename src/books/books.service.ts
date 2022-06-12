@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from '@prisma/client';
+import { QuerySearchBookDto } from './dto/query-search-book.dto';
 
 @Injectable()
 export class BooksService {
@@ -46,8 +47,29 @@ export class BooksService {
     });
   }
 
-  async findAll(): Promise<Book[]> {
+  async findAll(querySearchBookDto: QuerySearchBookDto): Promise<Book[]> {
     return await this.prisma.book.findMany({
+      where: {
+        title: { contains: querySearchBookDto.title },
+        publisher: {
+          name: { contains: querySearchBookDto.publisher },
+        },
+        published: querySearchBookDto.published === 'true',
+        authors: {
+          some: {
+            author: {
+              name: { contains: querySearchBookDto.author },
+            },
+          },
+        },
+        categories: {
+          some: {
+            category: {
+              name: { contains: querySearchBookDto.category },
+            },
+          },
+        },
+      },
       include: {
         publisher: true,
         authors: {

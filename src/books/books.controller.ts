@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -18,6 +19,7 @@ import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { BooksService } from './books.service';
 import { BookDto } from './dto/book.dto';
 import { CreateBookDto } from './dto/create-book.dto';
+import { QuerySearchBookDto } from './dto/query-search-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
 @ApiTags('Books')
@@ -35,8 +37,8 @@ export class BooksController {
   }
 
   @Get()
-  findAll() {
-    return this.booksService.findAll();
+  findAll(@Query() querySearchBookDto: QuerySearchBookDto) {
+    return this.booksService.findAll(querySearchBookDto);
   }
 
   @Get(':id')
