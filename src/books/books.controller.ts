@@ -14,13 +14,16 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/enums/role.enum';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { UserRoleGuard } from 'src/guards/user-role.guard';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { BooksService } from './books.service';
+import { BookDto } from './dto/book.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
 @ApiTags('Books')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, UserRoleGuard)
+@Serialize(BookDto)
 @Controller({ path: 'books', version: '1' })
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}

@@ -57,8 +57,16 @@ export class BooksService {
       },
       include: {
         publisher: true,
-        authors: true,
-        categories: true,
+        authors: {
+          select: {
+            author: true,
+          },
+        },
+        categories: {
+          select: {
+            category: true,
+          },
+        },
       },
     });
   }
@@ -68,8 +76,16 @@ export class BooksService {
       where: { id },
       include: {
         publisher: true,
-        authors: true,
-        categories: true,
+        authors: {
+          select: {
+            author: true,
+          },
+        },
+        categories: {
+          select: {
+            category: true,
+          },
+        },
       },
     });
 
