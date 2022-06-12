@@ -18,6 +18,7 @@ import { UserRoleGuard } from 'src/guards/user-role.guard';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { BooksService } from './books.service';
 import { BookDto } from './dto/book.dto';
+import { ChangePublishedDto } from './dto/change-published.dto';
 import { CreateBookDto } from './dto/create-book.dto';
 import { QuerySearchBookDto } from './dto/query-search-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -44,6 +45,15 @@ export class BooksController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.booksService.findOne(+id);
+  }
+
+  @Patch('/published/:id')
+  @Roles(Role.ADMIN)
+  publishedBook(
+    @Param('id') id: string,
+    @Body() changePublished: ChangePublishedDto,
+  ) {
+    return this.booksService.changePublished(+id, changePublished.published);
   }
 
   @Patch(':id')

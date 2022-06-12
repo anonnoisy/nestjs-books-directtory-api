@@ -114,6 +114,28 @@ export class BooksService {
     return book;
   }
 
+  async changePublished(id: number, isPublished: boolean): Promise<Book> {
+    return await this.prisma.book.update({
+      where: { id },
+      data: {
+        published: isPublished,
+      },
+      include: {
+        publisher: true,
+        authors: {
+          select: {
+            author: true,
+          },
+        },
+        categories: {
+          select: {
+            category: true,
+          },
+        },
+      },
+    });
+  }
+
   async update(
     id: number,
     userId: number,
