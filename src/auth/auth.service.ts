@@ -1,9 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { randomBytes, scrypt } from 'crypto';
+import { decryption } from 'src/helpers/hash.helper';
 import { UsersService } from 'src/users/users.service';
-import { promisify } from 'util';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
 
@@ -21,17 +20,7 @@ export class AuthService {
       throw new BadRequestException('Email is already in use');
     }
 
-    // Hash the user password
-    const salt = randomBytes(8).toString('hex');
-    const hash = (await promisify(scrypt)(
-      signUpDto.password,
-      salt,
-      32,
-    )) as Buffer;
-    const result = salt + '.' + hash.toString('hex');
-
-    signUpDto.password = result;
-
+    // the password will be encrypted on user creation
     return await this.usersService.create(signUpDto);
   }
 
@@ -42,14 +31,12 @@ export class AuthService {
       throw new BadRequestException('Invalid user credentials');
     }
 
-    const [salt, storedHash] = user.password.split('.');
-    const hash = (await promisify(scrypt)(
+    const isValidCredentials = await decryption(
       signInDto.password,
-      salt,
-      32,
-    )) as Buffer;
+      user.password,
+    );
 
-    if (storedHash !== hash.toString('hex')) {
+    if (!isValidCredentials) {
       throw new BadRequestException('Invalid user credentials');
     }
 
@@ -61,5 +48,9 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async profile(id: number) {
+    return await this.usersService.findOne(id);
   }
 }

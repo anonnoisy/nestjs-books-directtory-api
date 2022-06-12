@@ -1,11 +1,14 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
+import { AuthDto } from './dtos/auth.dto';
 import { SignInDto } from './dtos/sign-in.dto';
 import { SignUpDto } from './dtos/sign-up.dto';
 
 @ApiTags('Authentication')
+@Serialize(AuthDto)
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -56,6 +59,6 @@ export class AuthController {
     description: 'Get user profile successful.',
   })
   async profile(@Req() request) {
-    return request.user;
+    return await this.authService.profile(+request.user.userId);
   }
 }
